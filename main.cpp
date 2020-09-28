@@ -8,24 +8,30 @@
 #include <iostream>
 #include <string>
 
+/**
+* `Module` class implements arithmetical operations by modulo
+ * `T` is the data type
+*/
 template <typename T>
 class Modulo{
 public:
+    // default constructor
     Modulo(){
         number = 0;
         N = 1;
     }
-
     Modulo(T number_, T N_){
         N = N_;
         number = number_ % N;
     }
+    // copy operator
     Modulo& operator=(const Modulo<T> &other){
         number = other.number;
         N = other.N;
         return *this;
     }
 
+    // arithmetical operations
     Modulo operator+(const Modulo<T> &other) const{
         return Modulo<T>((number + other.number) % N, N);
     }
@@ -38,6 +44,7 @@ public:
     Modulo operator*(const Modulo<T> &other) const{
         return Modulo<T>((number * other.number) % N, N);
     }
+    // compare operators
     bool operator<(const Modulo<T> &other) const{
         return number < other.number;
     }
@@ -56,6 +63,7 @@ public:
     bool operator<=(const Modulo<T> &other) const{
         return ((*this) < other) || ((*this) == other);
     }
+    // binary power by modulo
     [[nodiscard]] Modulo<T> pow(Modulo<T> base, Modulo<T> exp) const{
         if (exp.number == 0)
             return Modulo<T>(1, N);
@@ -65,10 +73,12 @@ public:
         return Modulo<T>((tmp.number * tmp.number) % N, N);
     }
 
+    // division by modulo using the Euler theorem
     Modulo<T> operator/(Modulo<T> other) const{
         return Modulo<T>(((*this) * pow(other, Modulo(N - 2, N))).number % N, N);
     }
 
+    // prints the number of given ostream
     friend std::ostream& operator<< (std::ostream &out, const Modulo<T> &n){
         out << n.number;
         return out;
@@ -79,7 +89,9 @@ private:
 };
 
 
-
+/**
+ * help function prints help message to std::cout
+ **/
 void help(){
     std::cout << "plus num1 num2 mod" << std::endl;
     std::cout << "minus num1 num2 mod" << std::endl;
@@ -99,18 +111,23 @@ int main() {
     while (true){
         std::cout << ">>> ";
         std::cin >> cmd;
+        // exit commands
         if(cmd == "quit" || cmd == "exit") {
             break;
         }
+        // all available commands
         else if(cmd != "plus" && cmd != "minus" && cmd != "mul" && cmd != "div" && cmd != "pow" || cmd == "help"){
             help();
             continue;
         }
 
+        // create three numbers
         Number num1, num2, mod;
         std::cin >> num1 >> num2 >> mod;
+        // create three numbers by modulo
         Modulo<Number> n1(num1, mod), n2(num2, mod), n3(0, mod);
 
+        // given operations
         if(cmd == "plus"){
             n3 = n1 + n2;
         }
@@ -125,6 +142,7 @@ int main() {
         } else if(cmd == "pow"){
             n3 = n3.pow(n1, n2);
         }
+        // prints result
         std::cout << n3 << std::endl;
     }
 }
